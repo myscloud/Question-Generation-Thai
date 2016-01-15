@@ -101,8 +101,17 @@ class orchid_corpus:
 					self.word_list.add(word[0])
 					self.pos_list.add(word[1])
 
+	def exists(self, word):
+		return (word in self.word_list)
 
 	def get_corpus_pos(self):
 		return self.corpus_pos
 
+	def get_corpus_sentence(self):
+		return self.corpus_sentence
+
+	def test_print(self):
+		f = open("test/sentence_seg", "w")
+		f.write(str(self.corpus_sentence))
+		f.close()
 
