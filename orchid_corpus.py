@@ -11,9 +11,19 @@ class orchid_corpus:
 		self.corpus_sentence = list()
 		self.read_from_corpus()
 
+		# word and pos list
 		self.word_list = set()
 		self.pos_list = set()
+		self.pos_list_sentence = set()
 		self.get_word_pos_list()
+
+		# for statistics model
+		self.initp = dict()
+		self.trans_bi = dict()
+		self.trans_tri = dict()
+		self.emiss = dict()
+		self.calc_statistics()
+
 
 	def read_from_corpus(self):
 		corpus_file = open(self.orchid, "r")
@@ -100,6 +110,92 @@ class orchid_corpus:
 				for word in sentence:
 					self.word_list.add(word[0])
 					self.pos_list.add(word[1])
+		
+		self.pos_list_sentence = self.pos_list.copy()
+		self.pos_list_sentence.add("SBS")
+		self.pos_list_sentence.add("NSBS")
+
+
+	def calc_statistics(self):
+		cp = self.corpus_sentence
+		word_list = self.word_list
+		pos_list = self.pos_list_sentence
+
+		# initial probability
+		for pos in pos_list:
+			self.initp[pos] = 0
+
+		for paragraph in cp:
+			self.initp[paragraph[0][1]] += 1
+
+		n = len(cp)
+		for pos in self.initp:
+			self.initp[pos] /= n
+
+		# transition probability
+		# bigram
+		for pos1 in pos_list:
+			self.trans_bi[pos1] = dict()
+			self.trans_bi[pos1]["count"] = 0
+			for pos2 in pos_list:
+				self.trans_bi[pos1][pos2] = 0
+
+		for paragraph in cp:
+			n = len(paragraph)
+			for i in range(n - 1):
+				curr_pos = paragraph[i][1]
+				next_pos = paragraph[i+1][1]
+				self.trans_bi[curr_pos][next_pos] += 1
+				self.trans_bi[curr_pos]["count"] += 1
+
+		for pos1 in self.trans_bi:
+			for pos2 in self.trans_bi[pos1]:
+				if pos2 != "count":
+					self.trans_bi[pos1][pos2] /= self.trans_bi[pos1]["count"]
+
+		# trigram
+		for pos1 in pos_list:
+			self.trans_tri[pos1] = dict()
+			for pos2 in pos_list:
+				self.trans_tri[pos1][pos2] = dict()
+				self.trans_tri[pos1][pos2]["count"] = 0
+				for pos3 in pos_list:
+					self.trans_tri[pos1][pos2][pos3] = 0  # p(pos3|pos1,pos2)
+
+		for paragraph in cp:
+			n = len(paragraph)
+			for i in range(n - 2):
+				pos1 = paragraph[i][1]
+				pos2 = paragraph[i+1][1]
+				pos3 = paragraph[i+2][1]
+
+				self.trans_tri[pos1][pos2][pos3] += 1
+				self.trans_tri[pos1][pos2]["count"] += 1
+
+		for pos1 in self.trans_tri:
+			for pos2 in self.trans_tri[pos1]:
+				for pos3 in self.trans_tri[pos1][pos2]:
+					if pos3 != "count" and self.trans_tri[pos1][pos2]["count"] != 0:
+						self.trans_tri[pos1][pos2][pos3] /= self.trans_tri[pos1][pos2]["count"]
+
+        # emission probability
+		pos_count = dict()
+		for pos in pos_list:
+			pos_count[pos] = 0
+
+		for word in word_list:
+			self.emiss[word] = dict()
+			for pos in pos_list:
+				self.emiss[word][pos] = 0
+
+		for paragraph in cp:
+			for word in paragraph:
+				pos_count[word[1]] += 1
+				self.emiss[word[0]][word[1]] += 1
+
+		for word in word_list:
+			for pos in pos_list:
+				self.emiss[word][pos] /= pos_count[pos]
 
 	def exists(self, word):
 		return (word in self.word_list)
@@ -109,6 +205,12 @@ class orchid_corpus:
 
 	def get_corpus_sentence(self):
 		return self.corpus_sentence
+
+	def get_statistics_model(self, tri_gram=True):
+		if tri_gram:
+			return self.initp, self.trans_tri, self.emiss
+		else:
+			return self.initp, self.trans_bi, self.emiss
 
 	def test_print(self):
 		f = open("test/sentence_seg", "w")

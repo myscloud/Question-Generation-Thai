@@ -9,138 +9,6 @@ class sentence_segment:
 		self.corpus = corpus
 		self.wp = word_processing.word_processing()
 
-		self.initp = dict()
-		self.trans_bi = dict()
-		self.trans_tri = dict()
-		self.emiss = dict()
-
-		if self.corpus != None:
-			self.calc_statistics()
-
-		self.special = {
-			' ': '<space>',
-			'-': '<minus>',
-			'(': '<left_parenthesis>',
-			')': '<right_parenthesis>',
-			'*': '<asterisk>',
-			'.': '<full_stop>',
-			'"': '<quotation>',
-			'/': '<slash>',
-			':': '<colon>',
-			'=': '<equal>',
-			',': '<comma>',
-			';': '<semi_colon>',
-			'<': '<less_than>',
-			'>': '<greater_than>',
-			'&': '<ampersand>',
-			'{': '<left_curly_bracket>',
-			'}': '<right_curly_bracket>',
-			"'": '<apostrophe>',
-			'+': '<plus>',
-			'?': '<question_mark>',
-			'!': '<exclamation>',
-			'$': '<dollar>',
-			'%': '<percent>'
-		}
-
-		self.inv_special = dict()
-		for spc_char in self.special:
-			token = self.special[spc_char]
-			self.inv_special[token] = spc_char
-
-	def calc_statistics(self):
-		cp = self.corpus.get_corpus_sentence()
-		word_list = self.corpus.word_list
-		pos_list = self.corpus.pos_list
-		pos_list.add("SBS")
-		pos_list.add("NSBS")
-
-		# initial probability
-		for pos in pos_list:
-			self.initp[pos] = 0
-
-		for paragraph in cp:
-			self.initp[paragraph[0][1]] += 1
-
-		n = len(cp)
-		for pos in self.initp:
-			self.initp[pos] /= n
-
-		# transition probability
-		# bigram
-		for pos1 in pos_list:
-			self.trans_bi[pos1] = dict()
-			self.trans_bi[pos1]["count"] = 0
-			for pos2 in pos_list:
-				self.trans_bi[pos1][pos2] = 0
-
-		for paragraph in cp:
-			n = len(paragraph)
-			for i in range(n - 1):
-				curr_pos = paragraph[i][1]
-				next_pos = paragraph[i+1][1]
-				self.trans_bi[curr_pos][next_pos] += 1
-				self.trans_bi[curr_pos]["count"] += 1
-
-		for pos1 in self.trans_bi:
-			for pos2 in self.trans_bi[pos1]:
-				if pos2 != "count":
-					self.trans_bi[pos1][pos2] /= self.trans_bi[pos1]["count"]
-
-		# trigram
-		for pos1 in pos_list:
-			self.trans_tri[pos1] = dict()
-			for pos2 in pos_list:
-				self.trans_tri[pos1][pos2] = dict()
-				self.trans_tri[pos1][pos2]["count"] = 0
-				for pos3 in pos_list:
-					self.trans_tri[pos1][pos2][pos3] = 0  # p(pos3|pos1,pos2)
-
-		for paragraph in cp:
-			n = len(paragraph)
-			for i in range(n - 2):
-				pos1 = paragraph[i][1]
-				pos2 = paragraph[i+1][1]
-				pos3 = paragraph[i+2][1]
-
-				self.trans_tri[pos1][pos2][pos3] += 1
-				self.trans_tri[pos1][pos2]["count"] += 1
-
-		for pos1 in self.trans_tri:
-			for pos2 in self.trans_tri[pos1]:
-				for pos3 in self.trans_tri[pos1][pos2]:
-					if pos3 != "count" and self.trans_tri[pos1][pos2]["count"] != 0:
-						self.trans_tri[pos1][pos2][pos3] /= self.trans_tri[pos1][pos2]["count"]
-
-        # emission probability
-		pos_count = dict()
-		for pos in pos_list:
-			pos_count[pos] = 0
-
-		for word in word_list:
-			self.emiss[word] = dict()
-			for pos in pos_list:
-				self.emiss[word][pos] = 0
-
-		for paragraph in cp:
-			for word in paragraph:
-				pos_count[word[1]] += 1
-				self.emiss[word[0]][word[1]] += 1
-
-		for word in word_list:
-			for pos in pos_list:
-				self.emiss[word][pos] /= pos_count[pos]
-
-
-	def clean_special_characters(self, st):
-		sentence = [ word for word in st ]
-		word_count = len(sentence)
-		for i in range(word_count):
-			if sentence[i] in self.special:
-				sentence[i] = self.special[sentence[i]]
-
-		return sentence
-
 	def clean_unknown_word(self, sentence):
 		new_word_list = list()
 		to_be_tagged = list()
@@ -227,18 +95,29 @@ class sentence_segment:
 	def sentence_segment(self, paragraph, tri_gram=True):
 		
 		# preprocess
-		tmp_paragraph = self.clean_special_characters(paragraph)
+		words = self.wp.word_segment(paragraph)
+		tmp_paragraph = self.wp.clean_special_characters(words)
 		to_be_tagged, new_paragraph, replace_idx = self.clean_unknown_word(tmp_paragraph)
 
 		# call viterbi function to get most possible pos sequence
+		initp, trans, emiss = self.corpus.get_statistics_model(tri_gram)
+
 		if tri_gram:
-			path = vtb.viterbi_trigram(to_be_tagged, self.corpus.pos_list, self.initp, self.trans_tri, self.emiss)
+			path = vtb.viterbi_trigram(to_be_tagged, self.corpus.pos_list_sentence, initp, trans, emiss)
 		else:
-			path = vtb.viterbi(to_be_tagged, self.corpus.pos_list, self.initp, self.trans_bi, self.emiss)
+			path = vtb.viterbi(to_be_tagged, self.corpus.pos_list_sentence, initp, trans, emiss)
 
 		# postprocess
 		pos = self.invert_unknown_word(path, replace_idx)
-		sentences, sen_with_pos = self.cut_sentence(paragraph, pos)
+		sentences, sen_with_pos = self.cut_sentence(words, pos)
+
+		for sen in sentences:
+			print(sen, "=============")
+
 		return sentences, sen_with_pos
+
+	def get_stats(self):
+		return self.initp, self.trans_bi, self.trans_tri, self.emiss
+
 
 

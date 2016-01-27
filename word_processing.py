@@ -9,6 +9,33 @@ class word_processing:
 		self.cwd = os.path.dirname(os.path.realpath(__file__))
 		self.lexto_dir = self.cwd + "/LongLexTo/"
 
+		self.special = {
+			' ': '<space>',
+			'-': '<minus>',
+			'(': '<left_parenthesis>',
+			')': '<right_parenthesis>',
+			'*': '<asterisk>',
+			'.': '<full_stop>',
+			'"': '<quotation>',
+			'/': '<slash>',
+			':': '<colon>',
+			'=': '<equal>',
+			',': '<comma>',
+			';': '<semi_colon>',
+			'<': '<less_than>',
+			'>': '<greater_than>',
+			'&': '<ampersand>',
+			'{': '<left_curly_bracket>',
+			'}': '<right_curly_bracket>',
+			"'": '<apostrophe>',
+			'+': '<plus>',
+			'?': '<question_mark>',
+			'!': '<exclamation>',
+			'$': '<dollar>',
+			'%': '<percent>'
+		}
+
+
 	def word_segment(self, sentence, dict="lexitron_original.txt"):
 		# dict file
 	    os.remove(self.lexto_dir + 'lexitron.txt')
@@ -28,3 +55,15 @@ class word_processing:
 	    os.remove(self.lexto_dir + 'tmp_sentence')
 
 	    return words
+
+	def clean_special_characters(self, st):
+		sentence = [ word for word in st ]
+		word_count = len(sentence)
+		for i in range(word_count):
+			if sentence[i] in self.special:
+				sentence[i] = self.special[sentence[i]]
+
+		return sentence
+
+
+

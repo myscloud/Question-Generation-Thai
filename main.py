@@ -1,6 +1,5 @@
 import word_processing
 import orchid_corpus
-import POS_tag
 import sentence_segment
 import question_generate
 
@@ -11,7 +10,7 @@ def main():
 	ss = sentence_segment.sentence_segment(orchid)
 	wp = word_processing.word_processing()
 	qg = question_generate.question_generate()
-	# post = POS_tag.POS_tag(orchid)
+
 
 	args = sys.argv
 	if len(args) == 3:
@@ -24,20 +23,8 @@ def main():
 	lines = article.readlines()
 	article.close()
 
-	# for line in lines:
-	# 	words = wp.word_segment(line)
-	# 	sentences_bi, sen_with_pos_bi = ss.sentence_segment(words, tri_gram=False)
-	# 	sentences, sen_with_pos = ss.sentence_segment(words)
-	# 	print("===================== bigram =====================")
-	# 	for sentence in sentences_bi:
-	# 		print("-- ", sentence)
-	# 	print("===================== trigram =====================")
-	# 	for sentence in sentences:
-	# 		print("-- ", sentence)
-
 	for line in lines:
-		words = wp.word_segment(line)
-		sentences, sen_with_pos = ss.sentence_segment(words)
+		sentences, sen_with_pos = ss.sentence_segment(line, tri_gram=False)
 		for i in range(len(sentences)):
 			questions = qg.generate(sen_with_pos[i])
 			outfile.write(sentences[i] + "\n\n")
