@@ -26,22 +26,22 @@ def test_model(corpus):
 
 	count = 0
 	for paragraph in word_list:
-		# pos_bi = vtb.viterbi(paragraph, corpus.pos_list_sentence, initp, trans_bi, emiss)
-		pos_tri = vtb.viterbi_trigram(paragraph, corpus.pos_list_sentence, initp, trans_tri, emiss)
+		pos_bi = vtb.viterbi(paragraph, corpus.pos_list_sentence, initp, trans_bi, emiss)
+		# pos_tri = vtb.viterbi_trigram(paragraph, corpus.pos_list_sentence, initp, trans_tri, emiss)
 
-		# bigram_result.append(pos_bi)
-		trigram_result.append(pos_tri)
+		bigram_result.append(pos_bi)
+		# trigram_result.append(pos_tri)
 
 		print(count)
 		count += 1
 		if count == 1000:
 			break
 
-	# tp, tn, fp, fn, other = evaluate_sentence(pos_list, bigram_result)
-	# write_results_to_file("test/test_model_orchid_bigram", word_list, pos_list, bigram_result, tp, tn, fp, fn, other, test_text="bigram model test")
+	tp, tn, fp, fn, other = evaluate_sentence(pos_list[0:1000], bigram_result)
+	write_results_to_file("test/test_model_orchid_bigram", word_list[0:1000], pos_list, bigram_result, tp, tn, fp, fn, other, test_text="bigram model test")
 
-	tp, tn, fp, fn, other = evaluate_sentence(pos_list[0:1000], trigram_result)
-	write_results_to_file("test/test_model_orchid_trigram", word_list[0:1000], pos_list, trigram_result, tp, tn, fp, fn, other, test_text="trigram model test")
+	# tp, tn, fp, fn, other = evaluate_sentence(pos_list[0:1000], trigram_result)
+	# write_results_to_file("test/test_model_orchid_trigram", word_list[0:1000], pos_list, trigram_result, tp, tn, fp, fn, other, test_text="trigram model test")
 
 
 def evaluate_sentence(origin, test):
