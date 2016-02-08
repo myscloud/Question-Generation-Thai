@@ -2942,7 +2942,7 @@
 { tody, coraciiform_bird,@ genus_Todus,#m (tiny insectivorous West Indian bird having red-and-green plumage and a long straight bill) }
 
 { Apodiformes, order_Apodiformes, animal_order,@ class_Aves,#m (swifts; hummingbirds) }
-{ apodiform_bird, bird,@ order_Apodiformes,#m (nonpasserine bird having long wings and weak feet; spends much of its time in flight) } (nonpasserine==?)
+{ apodiform_bird, bird,@ order_Apodiformes,#m (nonpasserine bird having long wings and weak feet; spends much of its time in flight) }
 { Apodidae, family_Apodidae, bird_family,@ order_Apodiformes,#m (swifts; in former classifications included in the order Coraciiformes) }
 { [ swift, noun.animal:swiftlet,+ ] apodiform_bird,@ family_Apodidae,#m (a small bird that resembles a swallow and is noted for its rapid flight) }
 { Apus, genus_Apus, bird_genus,@ family_Apodidae,#m (type genus) }
@@ -2962,7 +2962,7 @@
 { thornbill1, hummingbird,@ genus_Chalcostigma,#m genus_Ramphomicron,#m (any of various South American hummingbirds with a sharp pointed bill) }
 
 { Caprimulgiformes, order_Caprimulgiformes, animal_order,@ class_Aves,#m (goatsuckers; frogmouths; oilbirds) }
-{ caprimulgiform_bird, bird,@ order_Caprimulgiformes,#m (long-winged nonpasserine birds) } (nonpasserine==?)
+{ caprimulgiform_bird, bird,@ order_Caprimulgiformes,#m (long-winged nonpasserine birds) }
 { Caprimulgidae, family_Caprimulgidae, bird_family,@ order_Caprimulgiformes,#m (goatsuckers) }
 { goatsucker, nightjar, caprimulgid, caprimulgiform_bird,@ family_Caprimulgidae,#m (mainly crepuscular or nocturnal nonpasserine birds with mottled greyish-brown plumage and large eyes; feed on insects) }
 { Caprimulgus, genus_Caprimulgus, bird_genus,@ family_Caprimulgidae,#m (type genus of the Caprimulgidae) }
@@ -6262,7 +6262,7 @@
 { rock_hyrax, rock_rabbit2, Procavia_capensis, hyrax,@ genus_Procavia,#m (hyrax that lives in rocky areas) }
 
 { Perissodactyla, order_Perissodactyla, animal_order,@ subclass_Eutheria,#m (nonruminant ungulates: horses; tapirs; rhinoceros; extinct forms) }
-{ [odd-toed_ungulate, even-toed_ungulate,!] perissodactyl, perissodactyl_mammal, ungulate,@ order_Perissodactyla,#m (placental mammals having hooves with an odd number of toes on each foot) }
+{ [ odd-toed_ungulate, even-toed_ungulate,!] perissodactyl, perissodactyl_mammal, ungulate,@ order_Perissodactyla,#m (placental mammals having hooves with an odd number of toes on each foot) }
 
 { Equidae, family_Equidae, mammal_family,@ order_Perissodactyla,#m (horses; asses; zebras; extinct animals) }
 { Equus, genus_Equus, mammal_genus,@ family_Equidae,#m (type genus of the Equidae: only surviving genus of the family Equidae) }
@@ -8081,5 +8081,4 @@
 { thorax1, noun.body:body_part,@ insect,#p (part of an insect's body that bears the wings and legs) }
 { prothorax, thorax1,@ (the anterior part of an insect's thorax; bears the first pair of legs) }
 { [ metamere, adj.all:divided^metameric,+ ] somite, noun.object:segment,@ (one of a series of similar body segments into which some animals are divided longitudinally) }
-
 

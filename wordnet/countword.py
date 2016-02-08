@@ -62,11 +62,20 @@ def extract_word_info(line):
 ###########################################################################
 # main program
 
-wordfile = open("noun.wordlist", "w")
-wordrelafile = open("noun.wordrela", "w")
+# wordfile = open("noun.wordlist", "w")
+# wordrelafile = open("noun.wordrela", "w")
 dbpath = "dbfiles"
 allfiles = [f for f in listdir(dbpath) if isfile(join(dbpath, f))]
 nounfiles = [f for f in allfiles if re.match(r"noun\..+", f)]
+
+nouns = set()
+f = open("noun.wordlist")
+tmp = f.readlines()
+nounlist = [word.strip() for word in tmp]
+f.close()
+
+for noun in nounlist:
+	nouns.add(noun)
 
 for f in nounfiles:
 	with open(join(dbpath, f), "r") as noun_info:
@@ -74,16 +83,22 @@ for f in nounfiles:
 			# print(f)
 			words, relations, definition = extract_word_info(line)
 			if words != None:
-				for word in words:
-					wordfile.write(word + "\n")
-					wordrelafile.write(word + " ")
-
-				wordrelafile.write("\n")
-
 				for relation in relations:
-					wordrelafile.write(str(relation) + " ")
+					w = relation[0]
+					if w not in nounlist:
+						print(w)
 
-				wordrelafile.write("\n")
+			# if words != None:
+			# 	for word in words:
+			# 		wordfile.write(word + "\n")
+			# 		wordrelafile.write(word + " ")
 
-wordfile.close()
-wordrelafile.close()
+			# 	wordrelafile.write("\n")
+
+			# 	for relation in relations:
+			# 		wordrelafile.write(str(relation) + " ")
+
+			# 	wordrelafile.write("\n")
+
+# wordfile.close()
+# wordrelafile.close()
