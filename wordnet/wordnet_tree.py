@@ -99,9 +99,50 @@ class wordnet_tree():
 			if len(self.ndata[curr_index][attr]) > 0:
 				curr_index = self.ndata[curr_index][attr][0]
 			else:
-				break
+				return None
 
 		return self.ndata[curr_index]["formatted"] if not index else curr_index
+
+	def get_all_hypernym(self, word, instance=False, reverse=False):
+		curr_index = self.get_index(word)
+		if curr_index == None:
+			return None
+
+		hypernyms_index = [curr_index]
+		attr = "hyper" if not instance else "in_hyper"
+		while True:
+			if len(self.ndata[curr_index][attr]) > 0:
+				curr_index = self.ndata[curr_index][attr][0]
+				hypernyms_index.append(curr_index)
+			else:
+				break
+
+		hypernyms = [self.ndata[index]["formatted"] for index in hypernyms_index]
+		return hypernym_list if not reverse else hypernym_list.reverse()
+
+	def get_siblings(self, word, instance=False, level=1):
+		query_word_index = self.get_index(word)
+		hypernym_index = self.get_hypernym(word, level=level, instance=instance, index=True)
+		if hypernym_index == None:
+			return []
+
+		attr = "hypo" if not instance else "in_hypo"
+		siblings_index = []
+		queue = [(hypernym_index, 0)]
+
+		while len(queue) > 0:
+			(word_index, word_level) = queue[0]
+			if word_level == level:
+				if word_index != query_word_index:
+					siblings_index.append(word_index)
+			else:
+				for child_index in self.ndata[word_index][attr]:
+					queue.append((child_index, word_level+1))
+
+			del queue[0]
+
+		siblings = [self.ndata[word_index]["formatted"] for word_index in siblings_index]
+		return siblings
 
 
 if __name__ == "__main__":
@@ -110,5 +151,5 @@ if __name__ == "__main__":
 	while True:
 		word = input("Enter word: ")
 		if word == "quit": break
-		print(wnt.get_hypernym(word, index=True))
+		print(wnt.get_siblings(word))
 
