@@ -5,7 +5,7 @@ class wordnet_tree():
 		self.ndata = self.read_data()
 		self.nindex = self.read_index()
 
-	def read_data(self, data_file="dbfiles/data.noun"):
+	def read_data(self, data_file="wordnet/dbfiles/data.noun"):
 		ndata = dict() # noun data (use same index as in data.noun)
 
 		with open(data_file, "r") as f:
@@ -67,7 +67,7 @@ class wordnet_tree():
 
 		return ndata
 
-	def read_index(self, index_file="dbfiles/index.noun"):
+	def read_index(self, index_file="wordnet/dbfiles/index.noun"):
 		nindex = dict()
 
 		with open(index_file, "r") as f:
@@ -92,7 +92,7 @@ class wordnet_tree():
 	def get_hypernym(self, word, level=1, index=False):
 		curr_index = self.get_index(word)
 		if curr_index == None:
-			return None
+			return None, None
 
 		attr = ""
 		for i in range(level):

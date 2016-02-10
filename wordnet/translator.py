@@ -6,8 +6,8 @@ class translator:
 
 	def __init__(self):
 		self.trans = dict()
-		self.read_translation_file("translation/th-en.trans", "th", "en")
-		self.read_translation_file("translation/en-th.trans", "en", "th")
+		self.read_translation_file("wordnet/translation/th-en.trans", "th", "en")
+		self.read_translation_file("wordnet/translation/en-th.trans", "en", "th")
 
 
 	def read_translation_file(self, filename, source, target):
@@ -37,7 +37,6 @@ class translator:
 		# for unknown words
 		if len(unknon_words) > 0:
 			meanings = self.Google_translate(unknon_words, source, target)
-			
 			f = open(self.trans[source][target]["#filename"], "a")
 			for i in range(len(meanings)):
 				tp = meanings[i]
@@ -52,20 +51,25 @@ class translator:
 		if len(words) == 0:
 			return None
 		
-		req_link = "https://www.googleapis.com/language/translate/v2?key=AIzaSyBVJW-BmJ7J53EyfN0IFS6Rrrd4H3Xyhg8&source=%s&target=%s" % (source, target)
-		
-		for word in words:
-			req_link += ("&q=" + word)
-
-		r = requests.get(req_link)
-		results = r.json()
-		trans = results["data"]["translations"]
-
 		trans_results = []
-		for i in range(len(words)):
-			tp = (words[i], trans[i]["translatedText"])
-			trans_results.append(tp)
+		words_copy = words[:]
+		while len(words_copy) > 0:
+			req_link = "https://www.googleapis.com/language/translate/v2?key=AIzaSyBVJW-BmJ7J53EyfN0IFS6Rrrd4H3Xyhg8&source=%s&target=%s" % (source, target)
+			
+			words_tmp = []
+			while len(words_copy) > 0 and len(req_link) < 250:
+				req_link += ("&q=" + words_copy[0])
+				words_tmp.append(words_copy[0])
+				del words_copy[0]
 
+			r = requests.get(req_link)
+			results = r.json()
+			trans = results["data"]["translations"]
+
+			for i in range(len(words_tmp)):
+				tp = (words_tmp[i], trans[i]["translatedText"])
+				trans_results.append(tp)
+				
 		return trans_results
 
 if __name__ == "__main__":

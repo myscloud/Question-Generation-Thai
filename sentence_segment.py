@@ -111,9 +111,6 @@ class sentence_segment:
 		pos = self.invert_unknown_word(path, replace_idx)
 		sentences, sen_with_pos = self.cut_sentence(words, pos)
 
-		for sen in sentences:
-			print(sen, "=============")
-
 		return sentences, sen_with_pos
 
 	def get_stats(self):
