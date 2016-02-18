@@ -1,6 +1,8 @@
 from html.parser import HTMLParser
 import urllib.request
 
+import sys
+
 class WikipediaParser(HTMLParser):
 	def __init__(self):
 		super().__init__()
@@ -53,17 +55,18 @@ class WikipediaParser(HTMLParser):
 
 
 if __name__ == "__main__":
+	args = sys.argv
 	parser = WikipediaParser()
-	f = open("html/01-มังคุด.html")
+	f = open(args[1])
 	html = f.readlines()
 	for line in html:
 		parser.feed(line.strip())
 	f.close()
 	
 	paragraphs = parser.get_paragraphs()
-	f = open("mangosteen.test", "w")
+	f = open(args[2], "w")
 	for paragraph in paragraphs:
-		f.write(paragraph + "\n\n")
+		f.write(paragraph + "\n")
 	f.close()
 
 	# parser.feed('<html><head><title>Test</title></head>'
