@@ -1,8 +1,8 @@
 	
-# import wordnet.translator as translator
-# import wordnet.wordnet_tree as wordnet_tree
-import translator
-import wordnet_tree
+import wordnet.translator as translator
+import wordnet.wordnet_tree as wordnet_tree
+# import translator
+# import wordnet_tree
 import inspect
 
 class wordnetthai:
