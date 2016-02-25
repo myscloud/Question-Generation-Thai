@@ -37,10 +37,10 @@ def question_gen(bigram_file, to_write):
 		sentences = literal_eval(paragraphs_bi[i])
 		for sentence in sentences:
 			for tp in sentence:
+				question_count += 1
 				(question, answer, choices) = tp
-				inq.write(question + "\n")
-				inq.write("คำตอบ: " + answer + "\n")
-				inq.write("____ ประเมินคำถาม\n\n")
+				inq.write(str(question_count) + ") " + question + "\n")
+				inq.write("คำตอบ: " + answer + "\n\n")
 				choice_count = 0
 				for choice in choices:
 					inq.write("__ " + choice + " \t ")
@@ -75,6 +75,6 @@ def sentence_first_pos(sentence_file, pos_file, to_write):
 	out_file.close()
 
 if __name__ == "__main__":
-	# sentence_gen("genetics/genetics.sen.bi", "genetics/genetics.sen.tri", "genetics/sentence")
-	# question_gen("genetics/genetics.quest.bi", "genetics/question")
-	sentence_first_pos("genetics/genetics.sen.bi", "genetics/genetics.pos.bi", "genetics/first.pos")
+	# sentence_gen("sun/sun-cut.sen.bi", "sun/sun-cut.sen.tri", "sun/sentence")
+	question_gen("globalwarming/globalwarming-cut.quest.bi", "globalwarming/question")
+	# sentence_first_pos("genetics/genetics.sen.bi", "genetics/genetics.pos.bi", "genetics/first.pos")

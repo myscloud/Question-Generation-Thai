@@ -39,10 +39,16 @@ class translator:
 			meanings = self.Google_translate(unknon_words, source, target)
 			f = open(self.trans[source][target]["#filename"], "a")
 			for i in range(len(meanings)):
-				tp = meanings[i]
-				f.write(tp[0] + "^" + tp[1] + "\n")
-				self.trans[source][target][tp[0]] = tp[1]
-				trans_results[unknown_list_index[i]] = tp
+				(src_word, tgt_word) = meanings[i]
+				
+				# delete an article in tgt_word
+				if tgt_word[0:4] == "the ": tgt_word = tgt_word[4:]
+				elif tgt_word[0:3] == "an ": tgt_word = tgt_word[3:]
+				elif tgt_word[0:2] == "a ": tgt_word = tgt_word[2:]
+
+				f.write(src_word + "^" + tgt_word + "\n")
+				self.trans[source][target][src_word] = tgt_word
+				trans_results[unknown_list_index[i]] = meanings[i]
 			f.close()
 
 		return trans_results

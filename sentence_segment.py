@@ -92,6 +92,24 @@ class sentence_segment:
 
 		return sentences, sen_with_pos
 
+	def merge_sentence(self, sentences, sen_with_pos):
+		new_sentences = [sentences[0]]
+		new_sen_with_pos = [sen_with_pos[0]]
+
+		for i in range(1, len(sentences)):
+			first_pos = sen_with_pos[i][0][1]
+			last_word_len = len(new_sentences[-1])
+
+			if (first_pos == "JSBR" or first_pos == "JCRG") and (last_word_len + len(sen_with_pos[i])) < 70:
+				new_sentences[-1] += " " + sentences[i]
+				new_sen_with_pos[-1].extend([(" ", "NSBS")])
+				new_sen_with_pos[-1].extend(sen_with_pos[i])
+			else:
+				new_sentences.append(sentences[i])
+				new_sen_with_pos.append(sen_with_pos[i])
+				
+		return new_sentences, new_sen_with_pos
+
 	def sentence_segment(self, paragraph, tri_gram=True):
 		
 		# preprocess
@@ -110,8 +128,10 @@ class sentence_segment:
 		# postprocess
 		pos = self.invert_unknown_word(path, replace_idx)
 		sentences, sen_with_pos = self.cut_sentence(words, pos)
+		merge_sen, merge_sen_with_pos = self.merge_sentence(sentences, sen_with_pos)
 
-		return sentences, sen_with_pos
+		# return sentences, sen_with_pos
+		return merge_sen, merge_sen_with_pos
 
 	def get_stats(self):
 		return self.initp, self.trans_bi, self.trans_tri, self.emiss

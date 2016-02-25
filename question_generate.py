@@ -9,6 +9,7 @@ class question_generate:
 		
 		for i in range(len(sen_with_pos)):
 			word = sen_with_pos[i]
+			# print(word, type(word))
 			if word[1] == "NCMN" or word[1] == "NPRP":
 				noun_idx.append(i)
 

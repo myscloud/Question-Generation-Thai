@@ -82,10 +82,11 @@ class wordnet_tree():
 
 		return nindex
 
-	def get_index(self, word):
+	def get_index(self, word, get_all=False):
 		pword = word.replace(" ", "_").lower()
 		if pword in self.nindex:
-			return self.nindex[pword][0] # return first sense of the word
+			if not get_all: return self.nindex[pword][0] # return first sense of the word
+			else: return self.nindex[pword]
 		else:
 			return None
 
@@ -106,6 +107,24 @@ class wordnet_tree():
 
 		hypernym = self.ndata[curr_index]["formatted"] if not index else curr_index
 		return hypernym, attr
+
+	# get hypernyms (in every senses) but just for 1-level hypernym
+	def get_hypernyms(self, word):
+		senses_index = self.get_index(word, get_all=True)
+		if senses_index == None:
+			return None
+
+		hypernym_index = []
+		for index in senses_index:
+			if len(self.ndata[index]["hyper"]) > 0:
+				for ele in self.ndata[index]["hyper"]:
+					hypernym_index.append((ele, ""))
+			elif len(self.ndata[index]["in_hyper"]) > 0:
+				for ele in self.ndata[index]["in_hyper"]:
+					hypernym_index.append((ele, "in_"))
+
+		return hypernym_index
+
 
 	def get_all_hypernym(self, word, reverse=False):
 		curr_index = self.get_index(word)
@@ -130,11 +149,11 @@ class wordnet_tree():
 			hypernyms.reverse()
 		return hypernyms
 
-	def get_siblings(self, word, level=1):
+	def get_siblings_one_sense(self, word, hypernym_index, attr, level=1):
 		query_word_index = self.get_index(word)
-		hypernym_index, attr = self.get_hypernym(word, level=level, index=True)
-		if hypernym_index == None:
-			return []
+		# hypernym_index, attr = self.get_hypernym(word, level=level, index=True)
+		# if hypernym_index == None:
+		# 	return []
 
 		siblings_index = []
 		queue = [(hypernym_index, 0)]
@@ -153,6 +172,23 @@ class wordnet_tree():
 
 		siblings = [self.ndata[word_index]["formatted"] for word_index in siblings_index]
 		return siblings
+
+	def get_siblings(self, word, get_all=True):
+		hypernyms_list = self.get_hypernyms(word)
+		if hypernyms_list == None or len(hypernyms_list) == 0:
+			return None
+
+		if not get_all:
+			return self.get_siblings_one_sense(word, hypernyms_list[0][0], hypernyms_list[0][1])
+		else:
+			siblings = []
+			sib = []
+			for hyper in hypernyms_list:
+				
+				sib = self.get_siblings_one_sense(word, hyper[0], hyper[1])
+				if len(sib) > 0:
+					siblings.append(sib)
+			return siblings
 
 
 if __name__ == "__main__":
