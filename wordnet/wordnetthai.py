@@ -41,14 +41,21 @@ class wordnetthai:
 	# 	else:
 	# 		return None
 
-	# def get_siblings(self, thai_word, level=1):
-	# 	trans_results = self.trans.translate([thai_word], "th", "en")
-	# 	(_, eng_word) = trans_results[0]
-	# 	eng_siblings = self.wn.get_siblings(eng_word, level)
+	def get_siblings(self, thai_word, with_original=False):
+		trans_results = self.trans.translate([thai_word], "th", "en")
+		(_, eng_word) = trans_results[0]
+		eng_siblings = self.wn.get_siblings(eng_word)
+		processed_eng_siblings = []
+		for sense in eng_siblings:
+			tmp = []
+			for word in sense:
+				tmp.append(self.process_eng_word(word))
+			processed_eng_siblings.append(tmp)
 
-	# 	processed_eng_siblings = [self.process_eng_word(word) for word in eng_siblings]
-	# 	trans_results = self.trans.translate(processed_eng_siblings, "en", "th")
-	# 	return [tp[1] for tp in trans_results]
+		return self.translate_results(processed_eng_siblings, with_original)
+		# processed_eng_siblings = [self.process_eng_word(word) for word in eng_siblings]
+		# trans_results = self.trans.translate(processed_eng_siblings, "en", "th")
+		# return [tp[1] for tp in trans_results]
 
 	# translate results from wordnet from English => Thai
 	# structure is n-Dimension list (n >= 1)
