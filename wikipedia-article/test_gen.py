@@ -33,6 +33,7 @@ def question_gen(bigram_file, to_write):
 
 	paragraphs_bi = bi.readlines()
 	question_count = 0
+	order = ["ก", "ข", "ค", "ง"]
 	for i in range(len(paragraphs_bi)):
 		sentences = literal_eval(paragraphs_bi[i])
 		for sentence in sentences:
@@ -40,16 +41,29 @@ def question_gen(bigram_file, to_write):
 				question_count += 1
 				(question, answer, choices) = tp
 				inq.write(str(question_count) + ") " + question + "\n")
-				inq.write("คำตอบ: " + answer + "\n\n")
-				choice_count = 0
-				for choice in choices:
-					inq.write("__ " + choice + " \t ")
-					choice_count += 1
-					if choice_count % 3 == 0:
-						inq.write("\n")
-						if choice_count >= 9: break
+				inq.write("(คำตอบ: " + str(answer) + ")\n")
+				inq.write("ประเมินคำถาม: [    ] \n")
+				for i in range(0, 4):
+					if i != 0:
+						inq.write("\t")
+					if str(choices[i]) != str(answer):
+						inq.write("[   ] ")
+					inq.write(order[i] + ". " + str(choices[i]))
+				# inq.write("[   ] ก. " + str(choices[0]))
+				# inq.write("\t[   ] ข. " + str(choices[1]))
+				# inq.write("\t[   ] ค. " + str(choices[2]))
+				# inq.write("\t[   ] ง. " + str(choices[3]) + "\n")
+				
+				# choice_count = 0
+				# for choice in choices:
+				# 	inq.write("__ " + str(choice) + " \t ")
+				# 	choice_count += 1
+				# 	if choice_count % 3 == 0:
+				# 		inq.write("\n")
+				# 		if choice_count >= 9: break
 
-				inq.write("\n\n----------------------------------\n\n")
+				# inq.write("\n\n----------------------------------\n\n")
+				inq.write("\n\n")
 
 	bi.close()
 	inq.close()

@@ -89,5 +89,5 @@ if __name__ == "__main__":
     	if args[1] == "all":
     		pass
     	else:
-    		# test_paper(args[1], args[2], False)
-    		test_paper(args[1], args[2], True)
+    		test_paper(args[1], args[2], False)
+    		# test_paper(args[1], args[2], True)

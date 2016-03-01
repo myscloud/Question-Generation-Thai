@@ -17,7 +17,7 @@ class question_generate:
 		sen = [ word[0] for word in sen_with_pos ]
 		for idx in noun_idx:
 			answer = sen[idx]
-			sen[idx] = "___"
+			sen[idx] = " ________ "
 			new_quest = "".join(sen)
 			sen[idx] = answer
 

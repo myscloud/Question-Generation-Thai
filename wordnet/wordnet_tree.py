@@ -149,6 +149,13 @@ class wordnet_tree():
 			hypernyms.reverse()
 		return hypernyms
 
+	def get_word_height(self, word):
+		all_hypernym = self.get_all_hypernym(word)
+		if all_hypernym == None:
+			return 0
+		else:
+			return len(all_hypernym)
+
 	def get_siblings_one_sense(self, word, hypernym_index, attr, level=1):
 		query_word_index = self.get_index(word)
 		# hypernym_index, attr = self.get_hypernym(word, level=level, index=True)
@@ -197,5 +204,6 @@ if __name__ == "__main__":
 	while True:
 		word = input("Enter word: ")
 		if word == "quit": break
-		print(wnt.get_siblings(word))
+		print(wnt.get_all_hypernym(word))
+		print(wnt.get_word_height(word))
 
