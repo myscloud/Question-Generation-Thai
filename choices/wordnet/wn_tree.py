@@ -4,6 +4,7 @@ class wordnet_tree():
 	def __init__(self):
 		self.ndata = self.read_data()
 		self.nindex = self.read_index()
+		self.read_cnt_list()
 
 	def read_data(self, data_file="choices/wordnet/dbfiles/data.noun"):
 		ndata = dict() # noun data (use same index as in data.noun)
@@ -27,6 +28,7 @@ class wordnet_tree():
 					d["hypo"] = []
 					d["in_hyper"] = []
 					d["in_hypo"] = []
+					d["freq"] = 0
 					
 					for i in range(len(tokens)):
 						if state == "index":
@@ -81,6 +83,16 @@ class wordnet_tree():
 					nindex[word] = tokens[sense_start_idx:]
 
 		return nindex
+
+	def read_cnt_list(self, cnt_file="choices/wordnet/dbfiles/cntlist.noun"):	
+		noun_freq_list = []
+		with open(cnt_file, "r") as f:
+			for line in f:
+				(freq, word, sense) = line.strip().split(" ")
+				freq = int(freq)
+				sense = int(sense)
+				index = self.nindex[word][sense-1]
+				self.ndata[index]["freq"] = freq
 
 	def get_index(self, word, get_all=False):
 		pword = word.replace(" ", "_").lower()
@@ -201,6 +213,23 @@ class wordnet_tree():
 			else:
 				return siblings
 
+	def get_no_of_sense(self, word):
+		if word in self.nindex:
+			return len(self.nindex[word])
+		else:
+			return None
+
+	def process_eng_word(self, word):
+		return word.replace(" ", "_").lower()
+
+	def get_word_frequency(self, word=None, index=None, sense=0):
+		if word != None and word in self.nindex and len(self.nindex[word]) > sense:
+			index = self.nindex[word][sense]
+			return self.ndata[index]["freq"]
+		elif index != None:
+			return self.ndata[index]["freq"]
+		else:
+			return None
 
 if __name__ == "__main__":
 	wnt = wordnet_tree()

@@ -17,16 +17,24 @@ def viterbi(obs, states, initp, trans, emiss):
         for t in range(1, test):
             new_path = {}
             vtb.append({})
+
             for state in states:
                 (prob, max_prev_state) = max(((vtb[t-1][prev_state] * trans[prev_state][state] * emiss[obs[t]][state]), prev_state) for prev_state in states)
+                
                 vtb[t][state] = prob
                 new_path[state] = path[max_prev_state] + [state]
 
-            path = new_path
             (max_prob, state) = max((vtb[t][st], st) for st in states)
-            if max_prob < 10e-15:
+            if max_prob < 10e-40:
+                (prob, max_state) = max((initp[state] * emiss[obs[t]][state], state) for state in states)
+                (prev_prob, max_prev_state) = max((vtb[t-1][state], state) for state in states)
+                vtb[t][max_state] = prob
+                new_path[max_state] = path[max_prev_state] + [max_state]
+            elif max_prob < 10e-15:
                 for state in states:
                     vtb[t][state] *= 10e+10
+
+            path = new_path
                     
         (prob, state) = max((vtb[test-1][st], st) for st in states)
         return path[state]

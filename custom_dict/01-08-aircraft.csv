@@ -1,0 +1,14 @@
+คำไทย,POS,คำแปล,sense
+เรือเหาะ,NCMN,airship,1
+อากาศนาวา,NCMN,airship,1
+เครื่องร่อน,NCMN,glider,1
+เฮลิคอปเตอร์,NCMN,helicopter,1
+ไจโรเพลน,NCMN,gyroplane,1
+เรือแพ,NCMN,houseboat,1
+สะเทินน้ำสะเทินบก,VSTA,amphibious,2
+แรงยก,NCMN,lift,2
+ความหนาแน่น,NCMN,density,1
+เครื่องกระพือบิน,NCMN,,
+เครื่องบิน,NCMN,plane,1
+ล่องลอง,VSTA,float,1
+ว่าว,NCMN,kite,3

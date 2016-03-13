@@ -79,7 +79,8 @@ class choice_generator:
 					new_item = word_item.word_item(siblings[i][j], eng_siblings[i][j], index[i][j], hypernyms[i])
 					all_choices.append(new_item)
 			
-			choices = self.rank_choices(all_choices, answer)
+			choices = all_choices
+			# choices = self.rank_choices(all_choices, answer)
 		else:
 			number, comma = self.get_integer(answer.word)
 			if number != None:

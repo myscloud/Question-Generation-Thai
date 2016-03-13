@@ -21,7 +21,7 @@ class question_generator:
 			new_quest = "".join(sen)
 			sen[idx] = answer
 
-			questions.append( (new_quest, answer) )
+			questions.append( (new_quest, answer, idx) )
 
 		return questions
 

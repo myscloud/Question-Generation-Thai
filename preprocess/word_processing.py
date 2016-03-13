@@ -1,6 +1,7 @@
 
 import subprocess
 import os
+import os.path
 import shutil
 
 class word_processing:
@@ -38,7 +39,8 @@ class word_processing:
 
 	def word_segment(self, sentence, dict="lexitron_original.txt"):
 		# dict file
-	    os.remove(self.dict_dir + 'lexitron.txt')
+	    if os.path.exists(self.dict_dir + 'lexitron.txt'):
+	    	os.remove(self.dict_dir + 'lexitron.txt')
 	    shutil.copyfile(self.dict_dir + dict, self.dict_dir + 'lexitron.txt')
 
 	    f = open(self.dict_dir + 'tmp_sentence', 'w')
@@ -53,7 +55,9 @@ class word_processing:
 	    words = uni_results.split('\n')
 
 	    os.remove(self.dict_dir + 'tmp_sentence')
-
+	    # for word in words:
+	    # 	print(word, end=" / ")
+	    # print("\n=====================")
 	    return words
 
 	def clean_special_characters(self, st):

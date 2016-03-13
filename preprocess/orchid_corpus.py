@@ -1,5 +1,6 @@
 
 import os
+import ast
 
 class orchid_corpus:
 
@@ -193,6 +194,13 @@ class orchid_corpus:
 				pos_count[word[1]] += 1
 				self.emiss[word[0]][word[1]] += 1
 
+		# modify for custom dictionary
+		for pos1 in pos_list:
+			kw = "_" + pos1
+			self.emiss[kw] = dict()
+			for pos2 in pos_list:
+				self.emiss[kw][pos2] = 0 if pos2 != pos1 else 1
+
 		for word in word_list:
 			for pos in pos_list:
 				self.emiss[word][pos] /= pos_count[pos]
@@ -217,3 +225,11 @@ class orchid_corpus:
 		f.write(str(self.corpus_sentence))
 		f.close()
 
+# initial pos map
+with open("preprocess/tools/pos_map") as f:
+	for line in f:
+		text = line.strip()
+		pos_map = ast.literal_eval(text)
+
+if __name__ == "__main__":
+	orchid = orchid_corpus()
