@@ -5,6 +5,7 @@ import choices.word_item as _wi
 import question_item as _qui
 import ranking.evaluate as _ev
 import ranking.analyse as _anl
+import ranking.question_ranker as qrank
 
 import ast
 import sys
@@ -16,9 +17,9 @@ import csv
 
 import choices.wordnet.wn_tree as wn_tree
 
-# ss = _ss.sentence_segment()
-# qg = _qg.question_generator()
-# chg = _chg.choice_generator()
+ss = _ss.sentence_segment()
+qg = _qg.question_generator()
+chg = _chg.choice_generator()
 
 def read_custom_dict(dictdir):
 	files = [join(dictdir, f) for f in listdir(dictdir) if isfile(join(dictdir, f))]
@@ -75,19 +76,33 @@ def test_read(file_name):
 if __name__ == "__main__":
     args = sys.argv
 
-    # if len(args) >= 2:
-    # 	all_questions = main_process(args[1])
+    if len(args) >= 2:
+    	generated_questions = main_process(args[1])
 
     all_questions = []
     with open("ranking/test-globalwarming.out", "r") as f:
     	for line in f:
     		a_question_item = _qui.question_item(from_str=line.strip())
     		all_questions.append(a_question_item)
-
+    
     _ev.read_eval_file("ranking/evaluation/sheet1.csv", all_questions)
     _ev.read_eval_file("ranking/evaluation/sheet2.csv", all_questions)
     _ev.read_eval_file("ranking/evaluation/sheet3.csv", all_questions)
-    _anl.question_first_pos(all_questions)    
+    qr = qrank.question_ranker(question_set=all_questions)
+
+    ranked_question, ranked_scores = qr.rank_question(generated_questions)
+    f = open("bank.rank", "w")
+    for question, score in ranked_scores:
+    	f.write(str(question.question) + "\n")
+    	f.write("( " + str(question.answer) + " )\n")
+    	for choice in question.choices:
+    		f.write(str(choice) + "\t" + str(choice.eng_word) + "\n")
+    	f.write("\n")
+    	f.write(str(score) + "\n\n")
+    f.close()
+
+    
+    # for custom dictionary
 
     # custom_dict = dict()
     # if len(args) >= 3:

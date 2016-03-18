@@ -1,6 +1,6 @@
 
 from statistics import mean
-from preprocess.orchid_corpus import pos_map
+import preprocess.orchid_corpus as orchid_corpus
 
 import preprocess.sentence as _sentence
 import choices.wordnet.wn_tree as wn_tree
@@ -9,6 +9,7 @@ import choices.word_item as _word_item
 import ast
 
 wn = wn_tree.wordnet_tree()
+orchid = orchid_corpus.orchid_corpus()
 
 class question_item:
 	def __init__(self, *args, **kwargs):
@@ -46,15 +47,16 @@ class question_item:
 		else:
 			return 0.0
 
+	def get_orchid_ratio(self):
+		known_word = sum([orchid.exists(word[0]) for word in self.sentence.pos])
+		known_ratio = (known_word / len(self.sentence.pos)) * 100
+		return known_ratio
+
 	def get_prev_pos(self):
 		if self.answer_index == 0:
 			return "<first>"
 		else:
 			pos = self.sentence.pos[self.answer_index-1][1]
-			# return type of pos (e.g. NPRP -> noun)
-			# for key in pos_map:
-			# 	if pos in pos_map[key]:
-			# 		return key
 			return pos
 
 	def get_next_pos(self):
@@ -76,7 +78,15 @@ class question_item:
 
 	def get_answer_freq_in_sentence(self):
 		word_list = [word for word, pos in self.sentence.pos]
-		return word_list.count(str(self.answer))
+		return word_list.count(str(self.answer)) / self.get_word_count()
+
+	def get_answer_freq_in_article(self, article):
+		article_len = 0
+		for word in article:
+			if word != " ":
+				article_len += 1
+
+		return (article.count(str(self.answer)) / article_len) * 100
 
 	def get_word_count(self):
 		word_count = 0
@@ -85,10 +95,31 @@ class question_item:
 				word_count += 1
 		return word_count
 
-	def get_answer_frequency(self):
+	def get_answer_familiarity(self):
 		processed_eng_word = wn.process_eng_word(str(self.answer.eng_word))
 		freq = wn.get_word_frequency(word=processed_eng_word)
 		return freq if freq != None else -1
+
+	def get_known_answer(self):
+		# todo: if answer is in custom dict, return 2.0
+		if orchid.exists(str(self.answer)):
+			return 1
+		else:
+			return 0
+
+	def get_all_features(self, article):
+		features = dict()
+		features["orchid"] = self.get_orchid_ratio()
+		# features["first-pos"] = self.get_first_pos()
+		features["sentence-len"] = self.get_word_count()
+		# features["prev-pos"] = self.get_prev_pos()
+		# features["next-pos"] = self.get_next_pos()
+		features["wn-height"] = self.get_wordnet_height()
+		features["known-ans"] = self.get_known_answer()
+		# features["freq-article"] = self.get_answer_freq_in_article(article)
+		features["ans-familiar"] = self.get_answer_familiarity()
+
+		return features
 
 	def __str__(self):
 		txt = self.question + "\n"

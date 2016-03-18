@@ -38,19 +38,20 @@ def analyse_question(function_name, test_set):
 def question_prev_pos(test_set):
 	labeled_value = analyse_question("get_prev_pos", test_set)
 	plot_histogram(labeled_value["good"], labeled_value["bad"],\
-		x_label="part of speech")
+		x_label="part of speech",
+		graph_name="Question acceptability compared to POS of word before the answer")
 
 def question_next_pos(test_set):
 	labeled_value = analyse_question("get_next_pos", test_set)
 	plot_histogram(labeled_value["good"], labeled_value["bad"],\
 		x_label="part of speech",\
-		graph_name="Compared to POS of word next to the answer")
+		graph_name="Question acceptability compared to POS of word next to the answer")
 
 def question_first_pos(test_set):
 	labeled_value = analyse_question("get_first_pos", test_set)
 	plot_histogram(labeled_value["good"], labeled_value["bad"],\
 		x_label="part of speech",\
-		graph_name="Compared to POS of the first word in a sentence")
+		graph_name="Question acceptability compared to part of speech of the first word in sentence")
 
 def question_wordnet_height(test_set):
 	labeled_value = analyse_question("get_wordnet_height", test_set)
@@ -58,14 +59,14 @@ def question_wordnet_height(test_set):
 	plot_histogram(labeled_value["good"], labeled_value["bad"],
 		x_range=list(range(0, max_value+1)),
 		x_label="wordnet height",
-		graph_name="Question acceptability compared with wordnet height of the answer")
+		graph_name="Question acceptability compared to wordnet height of the answer")
 
 def question_answer_freq_in_sentence(test_set):
 	labeled_value = analyse_question("get_answer_freq_in_sentence", test_set)
 	max_value = max(labeled_value["good"] + labeled_value["bad"])
 	plot_histogram(labeled_value["good"], labeled_value["bad"],\
 		x_range=list(range(1, max_value+1)), x_label="frequence of answer",
-		graph_name="Compared to frequency of answer in the sentence")
+		graph_name="Question acceptability compared to frequency of answer in the sentence")
 
 def question_answer_freq_in_article(test_set):
 	article = []
@@ -88,7 +89,7 @@ def question_answer_freq_in_article(test_set):
 	plot_histogram(labeled_value["good"], labeled_value["bad"],
 		x_range=list(range(1, max_value+1)),
 		x_label="frequency of answer",
-		graph_name="Compared to frequency of answer in the article")
+		graph_name="Question acceptability compared to frequency of answer in the article")
 
 def question_orchid(test_set):
 	labeled_value = {"good": [], "bad": []}
@@ -105,7 +106,7 @@ def question_orchid(test_set):
 	plot_histogram(labeled_value["good"], labeled_value["bad"],
 		x_range=(0, 100), bins_count=10,
 		x_label="ratio of known words (in orchid)",
-		graph_name="Question acceptability compared with ratio of known words in orchid")
+		graph_name="Question acceptability compared to ratio of known words in orchid")
 
 def question_sentence_length(test_set):
 	labeled_value = analyse_question("get_word_count", test_set)
@@ -113,15 +114,15 @@ def question_sentence_length(test_set):
 	plot_histogram(labeled_value["good"], labeled_value["bad"],\
 	 x_range=(0, max_length+1), bins_count=10,\
 	 x_label="number of words in a sentence",\
-	 graph_name="question -> number of words in the question sentence")
+	 graph_name="Question acceptability compared to frequency of the answer number of words in the question sentence")
 
-def question_answer_frequency(test_set):
-	labeled_value = analyse_question("get_answer_frequency", test_set)
+def question_answer_familiarity(test_set):
+	labeled_value = analyse_question("get_answer_familiarity", test_set)
 	max_value = max(labeled_value["good"] + labeled_value["bad"])
 	plot_histogram(labeled_value["good"], labeled_value["bad"],
 		x_range=(0, max_value), bins_count=10,
 		x_label="frequency of the answer",
-		graph_name="Question acceptability compared with frequency of the answer")
+		graph_name="Question acceptability compared to frequency of the answer")
 
 # ==============================================================================
 
