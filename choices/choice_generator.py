@@ -6,8 +6,8 @@ import random
 
 class choice_generator:
 
-	def __init__(self):
-		self.wn = wnth.wordnet_thai()
+	def __init__(self, wordnet):
+		self.wn = wordnet
 
 	# return True if word contains at least 1 thai character
 	def is_thai_word(self, word):
@@ -72,7 +72,7 @@ class choice_generator:
 
 	def choice_generate(self, answer):
 		if self.is_thai_word(answer.word):
-			siblings, eng_siblings, index, hypernyms = self.wn.get_siblings(answer.word)
+			siblings, eng_siblings, index, hypernyms = self.wn.get_siblings(answer.eng_word, answer.index)
 			all_choices = []
 			for i in range(len(hypernyms)):
 				for j in range(len(siblings[i])):

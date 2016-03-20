@@ -8,7 +8,10 @@ class translator:
 		self.trans = dict()
 		self.read_translation_file("choices/wordnet/translation/th-en.trans", "th", "en")
 		self.read_translation_file("choices/wordnet/translation/en-th.trans", "en", "th")
+		self.custom_dict = dict()
 
+	def set_custom_dict(self, custom_dict):
+		self.custom_dict = custom_dict
 
 	def read_translation_file(self, filename, source, target):
 		if source not in self.trans:
@@ -21,13 +24,16 @@ class translator:
 				(source_word, target_word) = line.strip().split("^")
 				self.trans[source][target][source_word] = target_word
 
-	def translate(self, words, source, target):
+	def translate(self, words, source, target, indexes=None):
 		trans_results = []
 		unknon_words = []
 		unknown_list_index = []
 
-		for word in words:
-			if word in self.trans[source][target]:
+		for i in range(len(words)):
+			word = words[i]
+			if indexes != None and indexes[i] in self.custom_dict:
+				trans_results.append((word, self.custom_dict[indexes[i]]))
+			elif word in self.trans[source][target]:
 				trans_results.append((word, self.trans[source][target][word]))
 			else:
 				trans_results.append(None)

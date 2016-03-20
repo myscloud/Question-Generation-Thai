@@ -12,19 +12,22 @@ class sentence_segment:
 
 		self.custom_dict = custom_dict
 		if custom_dict != None:
-			word_list = set()
-			with open("preprocess/tools/lexitron_original.txt") as f:
-				for line in f:
-					word_list.add(line.strip())
-			for word in custom_dict:
-				word_list.add(word)
-			self.dict_name = "custom_dict_word.txt"
-			with open("preprocess/tools/custom_dict_word.txt", "w") as f:
-				for word in word_list:
-					f.write(word + "\n")
+			self.set_custom_dict(custom_dict)
 		else:
 			self.dict_name = "lexitron_original.txt"
 
+	def set_custom_dict(self, custom_dict):
+		word_list = set()
+		with open("preprocess/tools/lexitron_original.txt") as f:
+			for line in f:
+				word_list.add(line.strip())
+		for word in custom_dict:
+			word_list.add(word)
+
+		with open("preprocess/tools/custom_dict_word.txt", "w") as f:
+			for word in word_list:
+				f.write(word + "\n")
+		self.dict_name = "custom_dict_word.txt"
 
 	def clean_unknown_word(self, sentence):
 		new_word_list = list()

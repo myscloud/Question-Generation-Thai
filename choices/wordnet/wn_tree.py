@@ -121,8 +121,7 @@ class wordnet_tree():
 		return hypernym, attr
 
 	# get hypernyms (in every senses) but just for 1-level hypernym
-	def get_hypernyms(self, word):
-		senses_index = self.get_index(word, get_all=True)
+	def get_hypernyms(self, senses_index):
 		if senses_index == None:
 			return None
 
@@ -130,10 +129,12 @@ class wordnet_tree():
 		for index in senses_index:
 			if len(self.ndata[index]["hyper"]) > 0:
 				for ele in self.ndata[index]["hyper"]:
-					hypernym_index.append((ele, ""))
+					hypernym_index.append((ele, "", index))
 			elif len(self.ndata[index]["in_hyper"]) > 0:
 				for ele in self.ndata[index]["in_hyper"]:
-					hypernym_index.append((ele, "in_"))
+					hypernym_index.append((ele, "in_", index))
+			else:
+				pass
 
 		return hypernym_index
 
@@ -171,7 +172,7 @@ class wordnet_tree():
 		else:
 			return len(all_hypernym)
 
-	def get_siblings_one_sense(self, query_word_index, hypernym_index, attr, level=1):
+	def get_siblings_one_sense(self, hypernym_index, attr, query_word_index, level=1):
 		siblings_index = []
 		queue = [(hypernym_index, 0)]
 		attr = attr + "hypo"
@@ -190,9 +191,10 @@ class wordnet_tree():
 		siblings = [self.ndata[word_index]["formatted"] for word_index in siblings_index]
 		return siblings, siblings_index
 
-	def get_siblings(self, word, get_all=True, index=True):
-		word_index = self.get_index(word)
-		hypernyms_list = self.get_hypernyms(word)
+	def get_siblings(self, word, get_all=True, index=True, word_index=None):
+		if word_index == None:
+			word_index = self.get_index(word, get_all=get_all)
+		hypernyms_list = self.get_hypernyms(word_index)
 		if hypernyms_list == None or len(hypernyms_list) == 0:
 			return None, None, None
 
@@ -202,7 +204,7 @@ class wordnet_tree():
 			hypernyms_index = []
 			siblings, siblings_index = [], []
 			for hyper in hypernyms_list:
-				sib, sib_index = self.get_siblings_one_sense(word_index, hyper[0], hyper[1])
+				sib, sib_index = self.get_siblings_one_sense(hyper[0], hyper[1], hyper[2])
 				if len(sib) > 0:
 					siblings.append(sib)
 					siblings_index.append(sib_index)
@@ -230,6 +232,18 @@ class wordnet_tree():
 			return self.ndata[index]["freq"]
 		else:
 			return None
+
+	def get_word_index(self, word, sense):
+		new_word = self.process_eng_word(word)
+		if new_word in self.nindex and sense == None:
+			return self.nindex[new_word]
+		elif new_word in self.nindex and sense <= len(self.nindex[new_word]):
+			return [self.nindex[new_word][sense-1]]
+		else:
+			return None
+
+	def exists(self, word):
+		return word in self.nindex
 
 if __name__ == "__main__":
 	wnt = wordnet_tree()
