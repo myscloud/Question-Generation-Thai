@@ -7,7 +7,8 @@ import question_item as _qui
 import ranking.evaluate as _ev
 import ranking.analyse as _anl
 import ranking.question_ranker as qrank
-import ranking.choice_ranker as chrank
+import choices.choice_ranker as chrank
+import display_results as display
 
 import ast
 import sys
@@ -22,12 +23,12 @@ import choices.wordnet.wn_tree as wn_tree
 ss = _ss.sentence_segment()
 qg = _qg.question_generator()
 wnth = _wnth.wordnet_thai()
-chg = _chg.choice_generator(wnth)
+chg = None
 qr = None
 choice_rank = None
 
 def read_custom_dict(dictdir):
-	files = [join(dictdir, f) for f in listdir(dictdir) if isfile(join(dictdir, f))]x
+	files = [join(dictdir, f) for f in listdir(dictdir) if isfile(join(dictdir, f))]
 	
 	custom_dict = dict()
 	for filename in files:
@@ -49,7 +50,8 @@ def read_custom_dict(dictdir):
 
 def main_process(input_file):
 	sentence_count = 0
-	all_questions = []
+	gen_questions = []
+	final_questions = []
 
 	with open(input_file, "r") as f:
 		for line in f:
@@ -63,15 +65,24 @@ def main_process(input_file):
 					ans_eng, ans_index = wnth.get_general_info(answer)
 					answer_item = _wi.word_item(answer, ans_eng, ans_index, None)
 					question_item = _qui.question_item(sentences[i], sentence_count, question, answer_item, answer_index)
+					gen_questions.append(question_item)
+			
+	ranked_questions, qrank_scores = qr.rank_question(gen_questions)
+	for question in ranked_questions:
+		choices = chg.generate_choices(question)
+		if choices != []:
+			question.add_choices(choices)
+			final_questions.append(question)
 
-					choices = chg.choice_generate(answer_item)
-					if len(choices) > 0:
-						question_item.add_choices(choices)
-						all_questions.append(question_item)
+	return final_questions
+
+		# choices = chg.choice_generate(answer_item)
+		# if len(choices) > 0:
+		# 	question_item.add_choices(choices)
+		# 	all_questions.append(question_item)
 
 
 	# print(len(all_questions))
-	return all_questions
 
 	# f = open("testnow", "wb")
 	# pickle.dump(all_questions, f)
@@ -112,6 +123,7 @@ if __name__ == "__main__":
     _ev.read_eval_file("ranking/evaluation/sheet3.csv", all_questions)
     qr = qrank.question_ranker(question_set=all_questions)
     choice_rank = chrank.choice_ranker(training_set=all_questions, wordnet=wnth)
+    chg = _chg.choice_generator(wnth, choice_rank)
     # ranked_question, ranked_scores = qr.rank_question(generated_questions)
 
     args = sys.argv
@@ -122,6 +134,7 @@ if __name__ == "__main__":
     		ss.set_custom_dict(custom_dict)
     		wnth.set_custom_dict(custom_dict)
     	generated_questions = main_process(args[1])
+    	display.display(generated_questions, percent=20)
 
     # f = open("bank-choice2.dict", "w")
     # for question in generated_questions:

@@ -28,7 +28,7 @@ class choice_ranker():
 		# features["edit-dist-eng"] = edit_distance(answer, choice)
 		features["familiar"] = self.wn.get_word_frequency(index=choice_item.index)
 		# features["height"] = self.wn.get_word_height(choice, index=choice_item.index)
-		features["siblings-count"] = self.wn.get_siblings_count(choice_item.index, choice_item.hypernym_index)
+		# features["siblings-count"] = self.wn.get_siblings_count(choice_item.index, choice_item.hypernym_index)
 		features["noun-cooccur"] = self.get_cooccur(answer, choice)
 		features["verb-cooccur"] = self.get_verb_cooccur(question_item, choice)
 
@@ -105,9 +105,9 @@ class choice_ranker():
 		model = regr.train_model(choice_vector, choice_scores)
 		return model
 
-	def rank_choices(self, question):
+	def rank_choices(self, question, choices_list):
 		choice_with_score = []
-		for choice in question.choices:
+		for choice in choices_list:
 			if choice.word != question.answer.word:
 				choice_features = self.get_data_feature(question, choice)
 				choice_vector = self.vectorize(choice_features)

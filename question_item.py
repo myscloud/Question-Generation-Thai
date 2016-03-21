@@ -144,10 +144,12 @@ class question_item:
 
 
 	def __str__(self):
+		print(self.question)
 		txt = self.question + "\n"
+		txt = "( " + self.answer.word + ")\n"
 		for choice in self.choices:
 			txt += choice.word + "\t"
-		txt += "\n" + str(self.sentence.pos)
+		txt += "\n"
 		return txt
 
 	def __repr__(self):
