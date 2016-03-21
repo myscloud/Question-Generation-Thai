@@ -21,6 +21,7 @@ class question_item:
 			self.answer = answer
 			self.answer_index = answer_index
 			self.choices = None
+			self.asked_choices = None
 		elif "from_str" in kwargs:
 			attributes = ast.literal_eval(kwargs["from_str"])
 			for key in attributes:
@@ -120,6 +121,27 @@ class question_item:
 		features["ans-familiar"] = self.get_answer_familiarity()
 
 		return features
+
+	def is_verb(self, index):
+		(word, pos) = self.sentence.pos[index]
+		if pos == "VSTA" or pos == "VACT":
+			return True
+		return False
+
+	def get_nearest_verb(self):
+		center = self.answer_index
+		boundary = max((center + 1), (len(self.sentence.pos) - center))
+
+		for count in range(1, boundary):
+			if center - count >= 0:
+				if self.is_verb(center - count):
+					return self.sentence.pos[center - count][0], (center - count)
+			if center + count < len(self.sentence.pos):
+				if self.is_verb(center + count):
+					return self.sentence.pos[center + count][0], (center + count)
+
+		return None, None
+
 
 	def __str__(self):
 		txt = self.question + "\n"

@@ -22,6 +22,27 @@ def question_analyse(test_set):
 
 	plt.show()
 
+def choice_analyse(test_set):
+	good_choice_count = 0
+	choice_count = 0
+	for question in test_set:
+		if question.get_average_eval() >= 2.0:
+			for choice in question.choices:
+				if choice.word != question.answer.word:
+					choice_count += 1
+					score = choice.get_average_eval()
+					if score >= 0.5:
+						good_choice_count += 1
+
+	# plot graph
+	sizes = [(good_choice_count / choice_count), (choice_count - good_choice_count) / choice_count]
+	labels = ["Good choices", "Bad choices"]
+	colors = ['palegreen', 'indianred']
+	plt.pie(sizes, labels=labels, colors=colors, autopct='%1.2f%%', startangle=90)
+	plt.axis("equal")
+
+	plt.show()
+
 def analyse_question(function_name, test_set):
 	labeled_value = {"good": [], "bad": []}
 

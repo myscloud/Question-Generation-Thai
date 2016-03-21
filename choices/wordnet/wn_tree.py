@@ -139,10 +139,11 @@ class wordnet_tree():
 		return hypernym_index
 
 
-	def get_all_hypernym(self, word, reverse=False):
-		curr_index = self.get_index(word)
+	def get_all_hypernym(self, word, reverse=False, curr_index=None):
 		if curr_index == None:
-			return None
+			curr_index = self.get_index(word)
+			if curr_index == None:
+				return None
 
 		hypernyms_index = [curr_index]
 		first = True
@@ -165,8 +166,8 @@ class wordnet_tree():
 	def get_word_from_index(self, index):
 		return self.ndata[index]["formatted"]
 
-	def get_word_height(self, word):
-		all_hypernym = self.get_all_hypernym(word)
+	def get_word_height(self, word, index=None):
+		all_hypernym = self.get_all_hypernym(word, curr_index=index)
 		if all_hypernym == None:
 			return 0
 		else:
@@ -214,6 +215,13 @@ class wordnet_tree():
 				return siblings, siblings_index, hypernyms_index
 			else:
 				return siblings
+
+	def get_siblings_count(self, word_index, hypernym_index):
+		attr = ""
+		if hypernym_index in self.ndata[word_index]["in_hyper"]:
+			attr = "in_"
+		attr += "hypo"
+		return len(self.ndata[hypernym_index][attr])
 
 	def get_no_of_sense(self, word):
 		if word in self.nindex:
