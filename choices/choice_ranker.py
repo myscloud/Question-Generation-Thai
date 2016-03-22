@@ -89,7 +89,7 @@ class choice_ranker():
 		if near_verb != None:
 			(_, verb_eng) = (self.trans.translate([near_verb], "th", "en"))[0]
 			return self.get_cooccur(verb_eng, word)
-		return None
+		return 0
 
 	def get_cooccur(self, first, second):
 		# word1 = self.get_last_word(first)

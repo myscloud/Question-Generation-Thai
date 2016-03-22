@@ -122,6 +122,7 @@ if __name__ == "__main__":
     _ev.read_eval_file("ranking/evaluation/sheet2.csv", all_questions)
     _ev.read_eval_file("ranking/evaluation/sheet3.csv", all_questions)
     qr = qrank.question_ranker(question_set=all_questions)
+    # qr.test_kfolds(all_questions)
     choice_rank = chrank.choice_ranker(training_set=all_questions, wordnet=wnth)
     chg = _chg.choice_generator(wnth, choice_rank)
     # ranked_question, ranked_scores = qr.rank_question(generated_questions)
@@ -134,7 +135,7 @@ if __name__ == "__main__":
     		ss.set_custom_dict(custom_dict)
     		wnth.set_custom_dict(custom_dict)
     	generated_questions = main_process(args[1])
-    	display.display(generated_questions, percent=20)
+    	display.display(generated_questions, percent=100)
 
     # f = open("bank-choice2.dict", "w")
     # for question in generated_questions:

@@ -2,7 +2,7 @@
 from math import ceil
 
 def display(question_item, percent=None, n_items=None):
-	if percent != None and percent in (0, 101):
+	if percent != None and percent in range(0, 101):
 		n_display = ceil((len(question_item) * percent) / 100)
 	elif n_items != None:
 		n_display = min(n_items, len(question_item))

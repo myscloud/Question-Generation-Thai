@@ -46,6 +46,10 @@ class question_ranker():
 		model = regr.train_model(data_vector, data_scores)
 		return model
 
+	def test_kfolds(self, question_set):
+		data_vector, data_scores = self.preprocess_data(question_set, has_score=True)
+		print(regr.test_kfold(data_vector, data_scores, 5))
+
 	def rank_question(self, question_set):
 		data_vector, _ = self.preprocess_data(question_set)
 		predicted_scores = regr.predict(self.model, data_vector)

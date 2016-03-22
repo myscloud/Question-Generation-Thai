@@ -116,7 +116,7 @@ class question_item:
 		# features["prev-pos"] = self.get_prev_pos()
 		# features["next-pos"] = self.get_next_pos()
 		features["wn-height"] = self.get_wordnet_height()
-		features["known-ans"] = self.get_known_answer()
+		# features["known-ans"] = self.get_known_answer()
 		# features["freq-article"] = self.get_answer_freq_in_article(article)
 		features["ans-familiar"] = self.get_answer_familiarity()
 
