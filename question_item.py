@@ -36,11 +36,17 @@ class question_item:
 
 		self.evals = []
 
+	def add_question_no(self, no):
+		self.question_no = no
+
 	def add_choices(self, new_choices):
 		self.choices = new_choices
 
 	def add_evaluation(self, eval):
 		self.evals.append(int(eval))
+
+	def add_evaluations(self, evals):
+		self.evals.extend(evals)
 
 	def get_average_eval(self):
 		if len(self.evals) > 0:

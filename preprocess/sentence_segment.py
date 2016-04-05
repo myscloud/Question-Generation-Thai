@@ -164,17 +164,12 @@ class sentence_segment:
 			path = vtb.viterbi_trigram(to_be_tagged, self.corpus.pos_list_sentence, initp, trans, emiss)
 		else:
 			path = vtb.viterbi(to_be_tagged, self.corpus.pos_list_sentence, initp, trans, emiss)
-			# for i in range(len(path)):
-			# 	print(to_be_tagged[i] + "\t\t" + path[i])
 
 		# postprocess
 		pos = self.invert_unknown_word(new_paragraph, path, replace_idx)
 		sentences, sen_with_pos = self.cut_sentence(words, pos)
 		merge_sen, merge_sen_with_pos = self.merge_sentence(sentences, sen_with_pos)
 
-		# return sentences, sen_with_pos
-		# return merge_sen, merge_sen_with_pos
-		# return [sentence.sentence(sentences[i], sen_with_pos[i]) for i in range(len(sentences))]
 		return [sentence.sentence(merge_sen[i], merge_sen_with_pos[i]) for i in range(len(merge_sen))]
 
 	def get_stats(self):

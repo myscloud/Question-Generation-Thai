@@ -30,11 +30,17 @@ class word_item:
 		else:
 			self.evals.append(score)
 
+	def add_evaluations(self, scores):
+		self.evals.extend(scores)
+
 	def get_average_eval(self):
 		if len(self.evals) > 0:
 			return mean(self.evals)
 		else:
 			return None
+
+	def is_distractor(self):
+		return self.hypernym_index != None
 
 	def __str__(self):
 		return self.word
