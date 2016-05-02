@@ -106,14 +106,15 @@ def plot_question(data_nodict, data_wdict):
 
 	ax.set_ylim(60, 100)
 	wdict_line, = plt.plot(x_axis, y_wdict, 'go-', label="questions with dictionary")
-	nodict_line, = plt.plot(x_axis, y_nodict, 'bo-', label="questions without dictionary")
+	nodict_line, = plt.plot(x_axis, y_nodict, 'bs--', label="questions without dictionary")
 
 	plt.legend(handles=[wdict_line, nodict_line])
 
 	# plt.title("Acceptability of generated questions")
-	plt.xlabel("Percent of questions in a list of ranked questions")
-	plt.ylabel("Percent of acceptability")
+	plt.xlabel("%")
+	plt.ylabel("Percentage of acceptable questions from lists of top-n ranked questions")
 	plt.show()
+
 
 
 if __name__ == "__main__":
@@ -125,5 +126,4 @@ if __name__ == "__main__":
 	data_wdict.extend(data["taxonomy-dict"])
 
 	plot_question(data_nodict, data_wdict)
-
 

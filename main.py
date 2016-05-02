@@ -49,6 +49,31 @@ def main_process(input_file):
 	return final_questions
 
 
+def generate_questions(article):
+	sentences = ss.sentence_segment(article, tri_gram=False)
+	gen_questions = []
+
+	for i in range(len(sentences)):
+		questions = qg.generate(sentences[i].pos)
+		for tp in questions:
+			(question, answer, answer_index) = tp
+			ans_eng, ans_index = wnth.get_general_info(answer)
+			answer_item = _wi.word_item(answer, ans_eng, ans_index, None)
+			question_item = _qui.question_item(sentences[i], sentence_count, question, answer_item, answer_index)
+			gen_questions.append(question_item)
+
+		sentence_count += 1
+
+	ranked_questions, qrank_scores = qr.rank_question(gen_questions)
+	for question in ranked_questions:
+		choices = chg.generate_choices(question)
+		if choices != []:
+			question.add_choices(choices)
+			final_questions.append(question)
+
+	return final_questions
+
+
 if __name__ == "__main__":
     
     qr, choice_rank = init_proc.train_ranking_model("ranking/test-globalwarming.out", eval_dir="ranking/evaluation/", wordnet=wnth)
@@ -61,6 +86,7 @@ if __name__ == "__main__":
     		custom_dict = init_proc.read_custom_dict(args[2])
     		ss.set_custom_dict(custom_dict)
     		wnth.set_custom_dict(custom_dict)
+    	
     	generated_questions = main_process(args[1])
     	# display.write_list_to_file(generated_questions, "test/market.wdict.list")
     	display.display(generated_questions)

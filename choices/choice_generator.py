@@ -42,7 +42,7 @@ class choice_generator:
 		else:
 			return []
 
-		random.shuffle(choices)
+		# random.shuffle(choices)
 		return choices
 
 if __name__ == "__main__":
